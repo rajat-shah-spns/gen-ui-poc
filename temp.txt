@@ -1,0 +1,6 @@
+Now follow the json-render library's catalog documentation https://json-render.dev/docs/catalog and create a catalog for these components:
+
+Card, Table, List, Banner - from Components directory
+Button, Accordion, Checkbox, Dialog - from base-ui 
+
+Zod is also installed use it. Define actions, functions, components all essential things properly. 
