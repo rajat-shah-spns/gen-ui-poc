@@ -8,14 +8,18 @@ export const catalog = defineCatalog(schema, {
 			props: z.object({
 				title: z.string(),
 				description: z.string().nullable(),
+				eyebrow: z.string().nullable(),
+				layout: z.enum(['stack', 'grid']).nullable(),
+				tone: z.enum(['default', 'accent', 'success', 'warning', 'danger']).nullable(),
 			}),
 			slots: ['default'],
 			description: 'A card for grouping related content.',
 		},
 		Table: {
 			props: z.object({
-				columns: z.array(z.object({ key: z.string(), header: z.string() })),
+				columns: z.array(z.object({ key: z.string(), header: z.string(), kind: z.enum(['text', 'action']).nullable() })),
 				rows: z.array(z.record(z.string(), z.unknown())),
+				caption: z.string().nullable(),
 			}),
 			description: 'A tabular display of columns and rows.',
 		},

@@ -10,5 +10,5 @@ export type ListProps<Item> = {
 
 export default function List<Item>({ items, renderItem, getItemKey, ordered = false, className = '' }: ListProps<Item>) {
 	const Component = ordered ? 'ol' : 'ul';
-	return <Component className={`divide-y divide-zinc-200 ${className}`}>{items.map((item, index) => <li key={getItemKey?.(item, index) ?? index}>{renderItem(item, index)}</li>)}</Component>;
+	return <Component className={`divide-y divide-zinc-200 rounded-lg border border-zinc-200 bg-white ${className}`}>{items.map((item, index) => <li className="px-4 py-3 text-sm text-zinc-700" key={getItemKey?.(item, index) ?? index}>{renderItem(item, index)}</li>)}</Component>;
 }
