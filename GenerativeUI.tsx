@@ -115,7 +115,7 @@ export default function GenerativeUI({ initialPrompt = presets[0], mockEnabled =
 
 				{isPending && !result && <div className="h-52 animate-pulse rounded-lg border border-zinc-200 bg-white" />}
 				{result && (
-					<StateProvider initialState={{}}>
+					<StateProvider initialState={result.spec.state ?? {}}>
 						<VisibilityProvider>
 							<ActionProvider handlers={{}}>
 								<ValidationProvider customFunctions={{}}>

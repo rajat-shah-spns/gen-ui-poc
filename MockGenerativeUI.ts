@@ -1,15 +1,19 @@
+import type { StateModel, VisibilityCondition } from '@json-render/core';
+
 export type GeneratedUISpec = {
 	root: string;
 	elements: Record<string, {
 		type: string;
 		props: Record<string, unknown>;
 		children?: string[];
+		visible?: VisibilityCondition;
 	}>;
+	state?: StateModel;
 };
 
 export type GeneratedUIResult = {
 	spec: GeneratedUISpec;
-	source: 'mock' | 'azure';
+	source: 'mock' | 'azure' | 'anthropic';
 	summary: string;
 	stages?: Array<{
 		label: string;
