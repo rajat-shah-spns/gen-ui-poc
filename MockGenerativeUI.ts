@@ -1,3 +1,5 @@
+import type { ExperienceContext, ExperienceIntent } from './MockDataIntentService';
+
 export type GeneratedUISpec = {
 	root: string;
 	elements: Record<string, {
@@ -9,6 +11,8 @@ export type GeneratedUISpec = {
 
 export type GeneratedUIResult = {
 	spec: GeneratedUISpec;
+	data: Record<string, unknown>;
+	intent: ExperienceIntent;
 	source: 'mock' | 'azure';
 	summary: string;
 	stages?: Array<{
@@ -23,9 +27,9 @@ const dashboardSpec: GeneratedUISpec = {
 		'renewal-insights': {
 			type: 'Card',
 			props: {
-				title: 'Renewal intelligence workspace',
-				description: 'Commercial portfolio signals prioritized by urgency, value, and churn risk.',
-				eyebrow: 'AI-assisted portfolio review',
+				title: { $state: '/workspace/title' },
+				description: { $state: '/workspace/description' },
+				eyebrow: { $state: '/workspace/eyebrow' },
 				layout: 'stack',
 				tone: 'accent',
 			},
@@ -34,8 +38,8 @@ const dashboardSpec: GeneratedUISpec = {
 		'renewal-signal': {
 			type: 'Banner',
 			props: {
-				title: 'Portfolio signal',
-				message: '39 high-risk renewals represent $1.7M in premium. Eight accounts have both urgent timing and churn scores above 80%.',
+				title: { $state: '/signal/title' },
+				message: { $state: '/signal/message' },
 			},
 		},
 		'portfolio-pulse': {
@@ -51,19 +55,19 @@ const dashboardSpec: GeneratedUISpec = {
 		},
 		'metric-due': {
 			type: 'Card',
-			props: { title: '142', description: 'Total renewals due', eyebrow: 'Volume', layout: 'stack', tone: 'accent' },
+			props: { title: { $state: '/metrics/due/value' }, description: { $state: '/metrics/due/label' }, eyebrow: { $state: '/metrics/due/category' }, layout: 'stack', tone: 'accent' },
 		},
 		'metric-premium': {
 			type: 'Card',
-			props: { title: '$4.8M', description: 'Premium at risk', eyebrow: 'Exposure', layout: 'stack', tone: 'success' },
+			props: { title: { $state: '/metrics/premium/value' }, description: { $state: '/metrics/premium/label' }, eyebrow: { $state: '/metrics/premium/category' }, layout: 'stack', tone: 'success' },
 		},
 		'metric-high-risk': {
 			type: 'Card',
-			props: { title: '39', description: 'High-risk accounts', eyebrow: 'Needs action', layout: 'stack', tone: 'danger' },
+			props: { title: { $state: '/metrics/highRisk/value' }, description: { $state: '/metrics/highRisk/label' }, eyebrow: { $state: '/metrics/highRisk/category' }, layout: 'stack', tone: 'danger' },
 		},
 		'metric-low-risk': {
 			type: 'Card',
-			props: { title: '46', description: 'Low-risk accounts', eyebrow: 'On track', layout: 'stack', tone: 'success' },
+			props: { title: { $state: '/metrics/lowRisk/value' }, description: { $state: '/metrics/lowRisk/label' }, eyebrow: { $state: '/metrics/lowRisk/category' }, layout: 'stack', tone: 'success' },
 		},
 		'attention-panel': {
 			type: 'Card',
@@ -79,8 +83,8 @@ const dashboardSpec: GeneratedUISpec = {
 		'active-filter': {
 			type: 'Banner',
 			props: {
-				title: 'Active view: All 142 renewals',
-				message: 'Risk mix — High 39 · Moderate 57 · Low 46. Updated 2 minutes ago.',
+				title: { $state: '/filter/title' },
+				message: { $state: '/filter/message' },
 			},
 		},
 		'renewals-table': {
@@ -96,13 +100,7 @@ const dashboardSpec: GeneratedUISpec = {
 					{ key: 'insight', header: 'AI insight', kind: 'text' },
 					{ key: 'action', header: 'Actions', kind: 'action' },
 				],
-				rows: [
-					{ priority: 'URGENT', customer: 'Acme Logistics', renewal: '12 days', premium: '$48,000', churn: '91%', insight: 'Competitor pricing is 18% lower; bundle value not discussed.', action: 'Act now' },
-					{ priority: 'HIGH', customer: 'NorthStar Manufacturing', renewal: '18 days', premium: '$32,500', churn: '84%', insight: 'Coverage gap found compared with similar accounts.', action: 'Prepare renewal' },
-					{ priority: 'MODERATE', customer: 'GreenTech Services', renewal: '24 days', premium: '$21,000', churn: '62%', insight: 'Renewal discussion has not started; peers engage 30 days out.', action: 'Schedule call' },
-					{ priority: 'LOW', customer: 'Apex Retail Group', renewal: '35 days', premium: '$15,900', churn: '22%', insight: 'Strong payment and service history; no negative signals.', action: 'Review offer' },
-					{ priority: 'MODERATE', customer: 'Harbor Foods', renewal: '41 days', premium: '$27,400', churn: '58%', insight: 'Two unresolved service issues may affect renewal sentiment.', action: 'Resolve issues' },
-				],
+				rows: { $state: '/renewals' },
 			},
 		},
 		'intervention-panel': {
@@ -119,7 +117,7 @@ const dashboardSpec: GeneratedUISpec = {
 		'priority-actions': {
 			type: 'List',
 			props: {
-				items: ['Contact eight urgent accounts today', 'Prepare coverage comparisons for high-risk accounts', 'Resolve open service issues before outreach'],
+				items: { $state: '/actions' },
 				ordered: true,
 			},
 		},
@@ -127,15 +125,15 @@ const dashboardSpec: GeneratedUISpec = {
 			type: 'Accordion',
 			props: {
 				title: 'How risk is prioritized',
-				content: 'The mock combines renewal timing, premium exposure, churn score, unresolved service activity, and engagement history. A live implementation would use governed business data and explainable scoring.',
+				content: { $state: '/guidance' },
 			},
 		},
 		'service-dialog': {
 			type: 'Dialog',
 			props: {
 				trigger: 'Inspect top account',
-				title: 'Acme Logistics context',
-				content: 'Renewal is due in 12 days. The account has no active service issues, but a competitor quote is 18% lower and a multi-policy discount has not been discussed.',
+				title: { $template: '${/topAccount/name} context' },
+				content: { $state: '/topAccount/detail' },
 			},
 		},
 		'review-button': { type: 'Button', props: { label: 'Start portfolio review', disabled: false } },
@@ -148,23 +146,24 @@ const checklistSpec: GeneratedUISpec = {
 		checklist: {
 			type: 'Card',
 			props: {
-				title: 'New claim review',
-				description: 'A guided checklist generated for the requested workflow.',
+				title: { $state: '/review/title' },
+				description: { $state: '/review/description' },
 			},
 			children: ['check-identity', 'check-policy', 'check-documents', 'guidance'],
 		},
-		'check-identity': { type: 'Checkbox', props: { label: 'Identity details verified', checked: true } },
-		'check-policy': { type: 'Checkbox', props: { label: 'Policy coverage confirmed', checked: false } },
-		'check-documents': { type: 'Checkbox', props: { label: 'Supporting documents reviewed', checked: false } },
+		'check-identity': { type: 'Checkbox', props: { label: { $state: '/review/checks/identity/label' }, checked: { $state: '/review/checks/identity/checked' } } },
+		'check-policy': { type: 'Checkbox', props: { label: { $state: '/review/checks/policy/label' }, checked: { $state: '/review/checks/policy/checked' } } },
+		'check-documents': { type: 'Checkbox', props: { label: { $state: '/review/checks/documents/label' }, checked: { $state: '/review/checks/documents/checked' } } },
 		guidance: {
 			type: 'Accordion',
 			props: {
 				title: 'Review guidance',
-				content: 'Confirm policy dates, insured parties, incident details, and mandatory attachments before continuing.',
+				content: { $state: '/review/guidance' },
 			},
 		},
 	},
 };
+
 
 const customerSpec: GeneratedUISpec = {
 	root: 'customer',
@@ -172,24 +171,20 @@ const customerSpec: GeneratedUISpec = {
 		customer: {
 			type: 'Card',
 			props: {
-				title: 'Customer 360',
-				description: 'A compact service view for Maya Cohen.',
+				title: { $template: '${/customer/name} — Customer 360' },
+				description: { $state: '/customer/description' },
 			},
 			children: ['customer-status', 'customer-details', 'customer-dialog'],
 		},
 		'customer-status': {
 			type: 'Banner',
-			props: { title: 'Preferred customer', message: '12-year relationship with no overdue balances.' },
+			props: { title: { $state: '/customer/status' }, message: { $state: '/customer/statusDetail' } },
 		},
 		'customer-details': {
 			type: 'Table',
 			props: {
 				columns: [{ key: 'field', header: 'Field' }, { key: 'value', header: 'Value' }],
-				rows: [
-					{ field: 'Active policies', value: '4' },
-					{ field: 'Open claims', value: '1' },
-					{ field: 'Last interaction', value: '2 days ago' },
-				],
+				rows: { $state: '/customer/details' },
 			},
 		},
 		'customer-dialog': {
@@ -197,7 +192,7 @@ const customerSpec: GeneratedUISpec = {
 			props: {
 				trigger: 'View service note',
 				title: 'Latest service note',
-				content: 'Customer requested an email update when the open claim moves to assessment.',
+				content: { $state: '/customer/latestNote' },
 			},
 		},
 	},
@@ -208,17 +203,17 @@ const welcomeSpec: GeneratedUISpec = {
 	elements: {
 		welcome: {
 			type: 'Card',
-			props: { title: 'Foundation Generative UI', description: 'Describe an interface and render it with trusted React components.' },
+			props: { title: { $state: '/overview/title' }, description: { $state: '/overview/description' } },
 			children: ['welcome-banner', 'welcome-list', 'welcome-button'],
 		},
 		'welcome-banner': {
 			type: 'Banner',
-			props: { title: 'Mock mode is active', message: 'No model credentials are required for this demonstration.' },
+			props: { title: 'Data + intent flow', message: { $state: '/overview/status' } },
 		},
 		'welcome-list': {
 			type: 'List',
 			props: {
-				items: ['Prompt intent is classified locally', 'A valid JSON UI specification is selected', 'json-render maps it to the approved registry'],
+				items: { $state: '/overview/steps' },
 				ordered: true,
 			},
 		},
@@ -270,8 +265,9 @@ const dashboardStages = createStages(dashboardSpec, [
 
 const checklistStages = createStages(checklistSpec, [
 	{ label: 'Creating the review workflow', elements: [] },
-	{ label: 'Adding verification checkpoints', elements: ['check-identity', 'check-policy', 'check-documents'] },
-	{ label: 'Adding contextual review guidance', elements: ['guidance'] },
+	{ label: 'Adding the review summary', elements: ['review-card'] },
+	{ label: 'Adding verification checkpoints', elements: ['checklist', 'check-identity', 'check-policy', 'check-documents'] },
+	{ label: 'Adding contextual review guidance', elements: ['guidance-accordion'] },
 ]);
 
 const customerStages = createStages(customerSpec, [
@@ -287,20 +283,18 @@ const welcomeStages = createStages(welcomeSpec, [
 	{ label: 'Composing approved components', elements: ['welcome-list', 'welcome-button'] },
 ]);
 
-export function createMockUI(prompt: string): GeneratedUIResult {
-	const normalizedPrompt = prompt.toLowerCase();
+export function createMockUI(context: ExperienceContext): GeneratedUIResult {
+	const templates = {
+		'renewal-intelligence': { spec: dashboardSpec, summary: 'Generated a renewal intelligence workspace', stages: dashboardStages },
+		'claim-review': { spec: checklistSpec, summary: 'Generated a guided review workflow', stages: checklistStages },
+		'customer-summary': { spec: customerSpec, summary: 'Generated a customer summary workspace', stages: customerStages },
+		'general-overview': { spec: welcomeSpec, summary: 'Generated a general component composition', stages: welcomeStages },
+	};
 
-	if (normalizedPrompt.includes('dashboard') || normalizedPrompt.includes('claim') && normalizedPrompt.includes('metric')) {
-		return { spec: dashboardSpec, source: 'mock', summary: 'Generated a renewal intelligence workspace', stages: dashboardStages };
-	}
-
-	if (normalizedPrompt.includes('checklist') || normalizedPrompt.includes('review')) {
-		return { spec: checklistSpec, source: 'mock', summary: 'Generated a guided review workflow', stages: checklistStages };
-	}
-
-	if (normalizedPrompt.includes('customer') || normalizedPrompt.includes('profile')) {
-		return { spec: customerSpec, source: 'mock', summary: 'Generated a customer summary workspace', stages: customerStages };
-	}
-
-	return { spec: welcomeSpec, source: 'mock', summary: 'Generated a general component composition', stages: welcomeStages };
+	return {
+		...templates[context.intent.kind],
+		data: context.data,
+		intent: context.intent,
+		source: 'mock',
+	};
 }

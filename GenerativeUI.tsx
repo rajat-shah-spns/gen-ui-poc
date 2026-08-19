@@ -79,7 +79,7 @@ export default function GenerativeUI({ initialPrompt = presets[0], mockEnabled =
 					</span>
 				</div>
 				<h1 className="max-w-3xl text-4xl font-semibold leading-tight text-zinc-950">{mockEnabled ? 'Generate interfaces without model credentials' : 'Generate interfaces with the live model'}</h1>
-				<p className="max-w-3xl text-base leading-7 text-zinc-600">{mockEnabled ? 'Prompts select deterministic JSON specifications on the server.' : 'Prompts generate constrained JSON specifications through the configured AI provider.'} The real json-render catalog, registry, and React components render the result.</p>
+				<p className="max-w-3xl text-base leading-7 text-zinc-600">An upstream service supplies data and presentation intent. {mockEnabled ? 'The simulated AI layer selects a bound JSON specification.' : 'The configured AI provider generates a bound JSON specification.'} json-render resolves the bindings and renders approved React components.</p>
 			</header>
 
 			<section className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
@@ -99,6 +99,11 @@ export default function GenerativeUI({ initialPrompt = presets[0], mockEnabled =
 						))}
 					</div>
 				</form>
+				<div className="mt-5 grid gap-2 border-t border-zinc-100 pt-4 text-xs font-medium text-zinc-600 sm:grid-cols-3">
+					<div className="rounded-md bg-zinc-50 px-3 py-2"><span className="mr-2 text-teal-700">1</span>Data + intent service</div>
+					<div className="rounded-md bg-zinc-50 px-3 py-2"><span className="mr-2 text-teal-700">2</span>AI SDK spec generation</div>
+					<div className="rounded-md bg-zinc-50 px-3 py-2"><span className="mr-2 text-teal-700">3</span>Bound UI rendering</div>
+				</div>
 			</section>
 
 			{error && <p className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">{error}</p>}
@@ -115,7 +120,7 @@ export default function GenerativeUI({ initialPrompt = presets[0], mockEnabled =
 
 				{isPending && !result && <div className="h-52 animate-pulse rounded-lg border border-zinc-200 bg-white" />}
 				{result && (
-					<StateProvider initialState={{}}>
+					<StateProvider initialState={result.data}>
 						<VisibilityProvider>
 							<ActionProvider handlers={{}}>
 								<ValidationProvider customFunctions={{}}>
@@ -127,12 +132,16 @@ export default function GenerativeUI({ initialPrompt = presets[0], mockEnabled =
 				)}
 			</section>
 
-			{result && (
+			{result && <div className="grid gap-4 lg:grid-cols-2">
 				<details className="rounded-lg border border-zinc-200 bg-zinc-950 text-zinc-100">
-					<summary className="cursor-pointer px-4 py-3 text-sm font-semibold">Inspect generated JSON specification</summary>
+					<summary className="cursor-pointer px-4 py-3 text-sm font-semibold">1 · Inspect upstream data + intent</summary>
+					<pre className="max-h-96 overflow-auto border-t border-zinc-800 p-4 text-xs leading-6 text-sky-300">{JSON.stringify({ intent: result.intent, data: result.data }, null, 2)}</pre>
+				</details>
+				<details className="rounded-lg border border-zinc-200 bg-zinc-950 text-zinc-100">
+					<summary className="cursor-pointer px-4 py-3 text-sm font-semibold">2 · Inspect generated bound spec</summary>
 					<pre className="max-h-96 overflow-auto border-t border-zinc-800 p-4 text-xs leading-6 text-emerald-300">{JSON.stringify(result.spec, null, 2)}</pre>
 				</details>
-			)}
+			</div>}
 		</div>
 	);
 }
